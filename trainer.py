@@ -132,8 +132,8 @@ class LocalModule(pl.LightningModule):
         y_prob = y_k
         loss = loss_k
 
-        self.log("loss", loss, on_step=True, on_epoch=True, sync_dist=True)
-        self.log("acc", self.acc_metrics(y_prob, label), on_step=False, on_epoch=True)
+        # self.log("loss", loss, on_step=True, on_epoch=True, sync_dist=True)
+        # self.log("acc", self.acc_metrics(y_prob, label), on_step=False, on_epoch=True)
 
         output = {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
         self.validation_step_outputs.append(output)
