@@ -153,14 +153,12 @@ class LocalModule(pl.LightningModule):
 
         return {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
 
-    def on_training_epoch_end(self):
+    def on_train_epoch_end(self):
         y_prob = torch.cat([o["y_prob_batch"] for o in self.train_step_outputs if o is not None and o["y_prob_batch"] is not None], dim=0)
         label = torch.cat([o["label_batch"] for o in self.train_step_outputs if o is not None and o["label_batch"] is not None], dim=0)
         metrics = self.train_metrics(y_prob, label)
-        # metrics['step'] = self.current_epoch
-        print(metrics)
-        self.logger.log_metrics(metrics, step=self.current_epoch)
 
+        self.logger.log_metrics(metrics, step=self.current_epoch)
         self.train_step_outputs.clear()
 
         sch = self.lr_schedulers()
