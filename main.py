@@ -47,22 +47,22 @@ def get_A_transforms():
 
 def get_metric(num_classes):
     metric_train = MetricCollection({
-        "Accuracy": Accuracy(num_classes=num_classes),
-        "BA": Accuracy(num_classes=num_classes, average="macro"),
-        # "F1": F1(num_classes=num_classes),
-        "AUROC": AUROC(num_classes=num_classes),
+        "Accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
+        "BA": Accuracy(num_classes=num_classes, task="multiclass", average="macro"),
+        "F1": F1(num_classes=num_classes, task="multiclass"),
+        "AUROC": AUROC(num_classes=num_classes, task="multiclass"),
     }, postfix='/train')
     metric_eval = MetricCollection({
-        "Accuracy": Accuracy(num_classes=num_classes),
-        "BA": Accuracy(num_classes=num_classes, average="macro"),
-        # "F1": F1(num_classes=num_classes),
-        "AUROC": AUROC(num_classes=num_classes),
+        "Accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
+        "BA": Accuracy(num_classes=num_classes, task="multiclass", average="macro"),
+        "F1": F1(num_classes=num_classes, task="multiclass"),
+        "AUROC": AUROC(num_classes=num_classes, task="multiclass"),
     }, postfix='/validation')
     metric_test = MetricCollection({
-        "Accuracy": Accuracy(num_classes=num_classes),
-        "BA": Accuracy(num_classes=num_classes, average="macro"),
-        # "F1": F1(num_classes=num_classes),
-        "AUROC": AUROC(num_classes=num_classes),
+        "Accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
+        "BA": Accuracy(num_classes=num_classes, task="multiclass", average="macro"),
+        "F1": F1(num_classes=num_classes, task="multiclass"),
+        "AUROC": AUROC(num_classes=num_classes, task="multiclass"),
     }, prefix='test/')
     return metric_train, metric_eval, metric_test
 
