@@ -14,7 +14,7 @@ import pyvips
 def read_rgb_img(img_path):
     # return Image.open(img_path).convert('RGB')
     # return cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
-    return pyvips.Image.new_from_file(img_path).numpy()
+    return pyvips.Image.new_from_file(img_path)
 
 # import jpeg4py as jpeg
 # def read_rgb_jpg(img_path):
@@ -51,7 +51,9 @@ class CsvDataset(Dataset):
         # else:
         img = read_rgb_img(full_path)
 
-        # 
+        # Replace black pixels with white pixels
+        img = (img == [0, 0, 0]).ifthenelse([255, 255, 255], img)
+        img = img.numpy()
 
         if self.transforms is not None:
             img = self.transforms(img)
