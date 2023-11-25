@@ -55,6 +55,14 @@ class RandomInfoProDecoder(InfoProDecoder):
     def forward(self, features, x=None, label=None):
         features_large, image_ori_large = features, x
 
+        min_dim_large = min(features_large.shape[-2], features_large.shape[-1])
+        min_dim_ori = min(image_ori_large.shape[-2] // self.up_scale, image_ori_large.shape[-1] // self.up_scale)
+
+        # If patch_size is larger than any dimension, reduce it temporarily
+        patch_size_new = min(min_dim_large, min_dim_ori, self.patch_size)
+        path_size_old = self.patch_size
+        self.patch_size = patch_size_new
+
         # cv2 height x width
         # Here width x hegith
         sampling_space_large = features_large.shape[-2] - self.patch_size, features_large.shape[-1] - self.patch_size
@@ -91,6 +99,9 @@ class RandomInfoProDecoder(InfoProDecoder):
                 loc = loc[0] * self.up_scale, loc[1] * self.up_scale
                 patch_sz = self.patch_size * self.up_scale
                 image_ori.append(image_ori_large[bi, :, loc[0]:loc[0] + patch_sz, loc[1]:loc[1] + patch_sz])
+
+        # Restore patch_size
+        self.patch_size = path_size_old
 
         features = torch.stack(features, dim=0)
         image_ori = torch.stack(image_ori, dim=0)
