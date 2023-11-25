@@ -154,8 +154,9 @@ class LocalModule(pl.LightningModule):
         sch = self.lr_schedulers()
         sch.step()
 
-    def validation_epoch_end(self, outs_dl):
-        for outs, metrics_fn in zip(outs_dl, [self.eval_metrics, self.eval_test_metrics]):
+
+    def on_validation_epoch_end(self, outs):
+        for outs, metrics_fn in zip(outs, [self.eval_metrics, self.eval_test_metrics]):
             y_prob = torch.cat([o["y_prob_batch"] for o in outs if o is not None], dim=0)
             label = torch.cat([o["label_batch"] for o in outs if o is not None], dim=0)
             metrics = metrics_fn(y_prob, label)
