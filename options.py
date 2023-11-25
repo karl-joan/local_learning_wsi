@@ -16,7 +16,7 @@ def add_common_arguments(parser):
 
     parser.add_argument("--K", type=int, default=4, help="The number of local modules")
     parser.add_argument('--load-weights', type=str, default=None, help='If not None, load weights from given path')
-    parser.add_argument("--precision", type=int, default=32, help="32 or 16 bit precision training")
+    parser.add_argument("--precision", type=str, default=32, help="32 or 16-mixed bit precision training")
 
     parser.add_argument('--lr', type=float, default=2e-5, metavar='LR',
                         help='learning rate (default: 2e-5)')
