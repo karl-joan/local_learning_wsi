@@ -47,21 +47,21 @@ def get_A_transforms():
 
 def get_metric(num_classes):
     metric_train = MetricCollection({
-        "Accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
+        "accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
         "BA": Accuracy(num_classes=num_classes, task="multiclass", average="macro"),
-        "F1": F1Score(num_classes=num_classes, task="multiclass"),
+        "f1": F1Score(num_classes=num_classes, task="multiclass"),
         "AUROC": AUROC(num_classes=num_classes, task="multiclass"),
-    }, postfix='/train')
+    }, prefix='train/')
     metric_eval = MetricCollection({
-        "Accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
+        "accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
         "BA": Accuracy(num_classes=num_classes, task="multiclass", average="macro"),
-        "F1": F1Score(num_classes=num_classes, task="multiclass"),
+        "f1": F1Score(num_classes=num_classes, task="multiclass"),
         "AUROC": AUROC(num_classes=num_classes, task="multiclass"),
-    }, postfix='/validation')
+    }, prefix='val/')
     metric_test = MetricCollection({
-        "Accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
+        "accuracy": Accuracy(num_classes=num_classes, task="multiclass"),
         "BA": Accuracy(num_classes=num_classes, task="multiclass", average="macro"),
-        "F1": F1Score(num_classes=num_classes, task="multiclass"),
+        "f1": F1Score(num_classes=num_classes, task="multiclass"),
         "AUROC": AUROC(num_classes=num_classes, task="multiclass"),
     }, prefix='test/')
     return metric_train, metric_eval, metric_test

@@ -123,8 +123,8 @@ class LocalModule(pl.LightningModule):
                 for cur_k in range(1, self.K + 1):
                     ft, y_k, loss_k = self(ft, label, ki=cur_k)
                     y_prob_k = F.softmax(y_k, dim=1)
-                    self.log("loss/part_%d" % cur_k, loss_k, on_step=True, on_epoch=True, sync_dist=True)
-                    self.log("acc/part_%d" % cur_k, self.acc_metrics(y_prob_k, label), on_step=False, on_epoch=True)
+                    self.log("loss/val_%d" % cur_k, loss_k, on_step=True, on_epoch=True, sync_dist=True)
+                    self.log("acc/val_%d" % cur_k, self.acc_metrics(y_prob_k, label), on_step=False, on_epoch=True)
         else:
             ft, y_k, loss_k = self(img, label, ki=-1)
 
