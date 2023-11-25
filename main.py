@@ -165,8 +165,8 @@ def main(args):
                          max_epochs=args.epochs, log_every_n_steps=50, num_sanity_val_steps=0,
                          precision=args.precision,
                          logger=logger,
-                         callbacks=lr_monitor,
-                         progress_bar_refresh_rate=None if args.progressive else 0)
+                         callbacks=lr_monitor, enable_progress_bar=True)
+                         
 
     trainer.fit(trainer_model, data_module)
 

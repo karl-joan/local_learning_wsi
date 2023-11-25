@@ -34,7 +34,6 @@ def add_common_arguments(parser):
     parser.add_argument('--gpu-id', type=lambda s: [int(item) for item in s.split(',')], default=[0])  # assign a gpu
 
     parser.add_argument('--run-name', type=str, default='test_run', help="The run name")
-    parser.add_argument('--progressive', action="store_true", help='Whether show progressive the bar')
     return parser
 
 
