@@ -7,12 +7,14 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import pytorch_lightning as pl
+import pyvips
 
 
 # from PIL import Image
 def read_rgb_img(img_path):
     # return Image.open(img_path).convert('RGB')
-    return cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
+    # return cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
+    return pyvips.Image.new_from_file(img_path).numpy()
 
 # import jpeg4py as jpeg
 # def read_rgb_jpg(img_path):
