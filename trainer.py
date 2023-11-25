@@ -40,6 +40,7 @@ class LocalModule(pl.LightningModule):
 
         self.valid_as_train=valid_as_train
 
+        self.train_step_outputs = []
         self.validation_step_outputs = []
 
         self.save_hyperparameters("args")
@@ -110,8 +111,10 @@ class LocalModule(pl.LightningModule):
                             "y_prob_batch": None, "label_batch": None}
                     # return None
 
+        output = {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
+        self.train_step_outputs.append(output)
 
-        return {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
+        return loss
 
     def validation_step(self, batch, batch_idx, dataloader_idx):
         img, label = batch
@@ -123,8 +126,8 @@ class LocalModule(pl.LightningModule):
                 for cur_k in range(1, self.K + 1):
                     ft, y_k, loss_k = self(ft, label, ki=cur_k)
                     y_prob_k = F.softmax(y_k, dim=1)
-                    self.log("loss/val_%d" % cur_k, loss_k, on_step=True, on_epoch=True, sync_dist=True)
-                    self.log("acc/val_%d" % cur_k, self.acc_metrics(y_prob_k, label), on_step=False, on_epoch=True)
+                    self.log("loss/val_%d" % cur_k, loss_k, on_step=True, on_epoch=True, sync_dist=True, add_dataloader_idx=False)
+                    self.log("acc/val_%d" % cur_k, self.acc_metrics(y_prob_k, label), on_step=False, on_epoch=True, add_dataloader_idx=False)
         else:
             ft, y_k, loss_k = self(img, label, ki=-1)
 
@@ -138,7 +141,7 @@ class LocalModule(pl.LightningModule):
         output = {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
         self.validation_step_outputs.append(output)
 
-        return output
+        return loss
 
     def test_step(self, batch, batch_idx):
         img, label = batch
@@ -150,15 +153,18 @@ class LocalModule(pl.LightningModule):
 
         return {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
 
-    def on_training_epoch_end(self, outs):
-        y_prob = torch.cat([o["y_prob_batch"] for o in outs if o is not None and o["y_prob_batch"] is not None], dim=0)
-        label = torch.cat([o["label_batch"] for o in outs if o is not None and o["label_batch"] is not None], dim=0)
+    def on_training_epoch_end(self):
+        y_prob = torch.cat([o["y_prob_batch"] for o in self.train_step_outputs if o is not None and o["y_prob_batch"] is not None], dim=0)
+        label = torch.cat([o["label_batch"] for o in self.train_step_outputs if o is not None and o["label_batch"] is not None], dim=0)
         metrics = self.train_metrics(y_prob, label)
         # metrics['step'] = self.current_epoch
         self.logger.log_metrics(metrics, step=self.current_epoch)
 
+        self.train_step_outputs.clear()
+
         sch = self.lr_schedulers()
         sch.step()
+
 
 
     def on_validation_epoch_end(self):
