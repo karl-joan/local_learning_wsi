@@ -65,9 +65,16 @@ class RandomInfoProDecoder(InfoProDecoder):
         sampling_space = min(sampling_space_large[0], sampling_space_ori[0]), \
                 min(sampling_space_large[1], sampling_space_ori[1])
         
-        print(f"Large space: {sampling_space_large}")
-        print(f"Ori space: {sampling_space_ori}")
-        print(f"Sampling space: {sampling_space}")
+        if sampling_space[0] <= 0 or sampling_space[1] <= 0:
+            print("="*20)
+            print(f"fetures_large.shape: {features_large.shape}")
+            print(f"image_ori_large.shape: {image_ori_large.shape}")
+
+            print(f"patch_size: {self.patch_size}")
+
+            print(f"Large space: {sampling_space_large}")
+            print(f"Ori space: {sampling_space_ori}")
+            print(f"Sampling space: {sampling_space}")
 
         sampling_pos = torch.randint(0, sampling_space[0] * sampling_space[1],
                                      [features_large.shape[0], self.num_patches], device=features.device)
