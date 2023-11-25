@@ -40,6 +40,8 @@ class LocalModule(pl.LightningModule):
 
         self.valid_as_train=valid_as_train
 
+        self.validation_step_outputs = []
+
         self.save_hyperparameters("args")
 
 
@@ -132,7 +134,11 @@ class LocalModule(pl.LightningModule):
 
         self.log("loss", loss, on_step=True, on_epoch=True, sync_dist=True)
         self.log("acc", self.acc_metrics(y_prob, label), on_step=False, on_epoch=True)
-        return {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
+
+        output = {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
+        self.validation_step_outputs.append(output)
+
+        return output
 
     def test_step(self, batch, batch_idx):
         img, label = batch
@@ -155,13 +161,15 @@ class LocalModule(pl.LightningModule):
         sch.step()
 
 
-    def on_validation_epoch_end(self, outs):
-        for outs, metrics_fn in zip(outs, [self.eval_metrics, self.eval_test_metrics]):
+    def on_validation_epoch_end(self):
+        for outs, metrics_fn in zip(self.validation_step_outputs, [self.eval_metrics, self.eval_test_metrics]):
             y_prob = torch.cat([o["y_prob_batch"] for o in outs if o is not None], dim=0)
             label = torch.cat([o["label_batch"] for o in outs if o is not None], dim=0)
             metrics = metrics_fn(y_prob, label)
             if not self.trainer.sanity_checking:
                 self.logger.log_metrics(metrics, step=self.current_epoch)
+
+        self.validation_step_outputs.clear()
 
     def on_test_epoch_end(self, outs):
         y_prob = torch.cat([o["y_prob_batch"] for o in outs], dim=0)
