@@ -55,6 +55,8 @@ class RandomInfoProDecoder(InfoProDecoder):
     def forward(self, features, x=None, label=None):
         features_large, image_ori_large = features, x
 
+        # cv2 height x width
+        # Here width x hegith
         sampling_space_large = features_large.shape[-2] - self.patch_size, features_large.shape[-1] - self.patch_size
 
         sampling_space_ori = (image_ori_large.shape[-2] - self.patch_size * self.up_scale) // self.up_scale, \
@@ -62,6 +64,10 @@ class RandomInfoProDecoder(InfoProDecoder):
 
         sampling_space = min(sampling_space_large[0], sampling_space_ori[0]), \
                 min(sampling_space_large[1], sampling_space_ori[1])
+        
+        print(f"Large space: {sampling_space_large}")
+        print(f"Ori space: {sampling_space_ori}")
+        print(f"Sampling space: {sampling_space}")
 
         sampling_pos = torch.randint(0, sampling_space[0] * sampling_space[1],
                                      [features_large.shape[0], self.num_patches], device=features.device)
