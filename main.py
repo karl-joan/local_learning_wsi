@@ -161,7 +161,7 @@ def main(args):
 
     logger = WandbLogger(project=args.project_name, name=args.run_name, log_model=True)
 
-    trainer = pl.Trainer(default_root_dir=os.path.join(args.output_dir, args.run_name), gpus=args.gpu_id,
+    trainer = pl.Trainer(default_root_dir=os.path.join(args.output_dir, args.run_name), accelerator="gpu",
                          max_epochs=args.epochs, log_every_n_steps=50, num_sanity_val_steps=0,
                          precision=args.precision,
                          logger=logger,
