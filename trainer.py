@@ -32,7 +32,7 @@ class LocalModule(pl.LightningModule):
 
         self.train_metrics, self.eval_metrics, self.test_metrics = metrics_fn
 
-        self.acc_metrics = torchmetrics.Accuracy(num_classes=num_classes)
+        self.acc_metrics = torchmetrics.Accuracy(num_classes=num_classes, task="multiclass")
 
         eval_test_prefix = "test_" + self.eval_metrics.prefix if self.eval_metrics.prefix is not None else None
         eval_test_postfix = self.eval_metrics.postfix + "_test" if self.eval_metrics.postfix is not None else None
