@@ -55,7 +55,7 @@ class CsvDataset(Dataset):
             # Apply the crop to the image
             img = self.transform_crop.apply(img, **params)
         else:
-            img = np.asarray(img)
+            img = img.numpy()
 
         if self.transforms is not None:
             img = self.transforms(img)
