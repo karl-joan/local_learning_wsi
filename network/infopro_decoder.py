@@ -65,6 +65,7 @@ class RandomInfoProDecoder(InfoProDecoder):
         sampling_space = min(sampling_space_large[0], sampling_space_ori[0]), \
                 min(sampling_space_large[1], sampling_space_ori[1])
         
+        # Debug
         if sampling_space[0] <= 0 or sampling_space[1] <= 0:
             print("="*20)
             print(f"fetures_large.shape: {features_large.shape}")

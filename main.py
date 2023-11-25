@@ -30,6 +30,7 @@ def get_A_transforms():
     transform_train_fn = A.Compose([
         # For smaller WSI, we set a conservative scale, otherwise, it may result in too small images
         RandomCropEdge(scale=(0.5, 1.0), scale_for_small=(0.9, 1.0), small_length=3000, p=0.6),
+        A.Lambda(image=lambda x: x.numpy()),
         A.Flip(p=0.75),
         A.RandomRotate90(),
         A.ColorJitter(0.1, 0.1, 0.1, 0.1),
