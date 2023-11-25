@@ -54,11 +54,9 @@ class CsvDataset(Dataset):
 
             # Apply the crop to the image
             img = self.transform_crop.apply(img, **params)
-        else:
-            img = img.numpy()
+        img = img.numpy()
 
         if self.transforms is not None:
-            print(type(img))
             img = self.transforms(img)
             if isinstance(img, np.ndarray):
                 img = transforms.ToTensor()(img)
