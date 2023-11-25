@@ -58,6 +58,7 @@ class CsvDataset(Dataset):
             img = img.numpy()
 
         if self.transforms is not None:
+            print(type(img))
             img = self.transforms(img)
             if isinstance(img, np.ndarray):
                 img = transforms.ToTensor()(img)
