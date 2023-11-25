@@ -47,7 +47,7 @@ class _BaseRandomCrop(DualTransform):
     def apply(self, img, crop_height=0, crop_width=0, h_start=0, w_start=0, interpolation=cv2.INTER_LINEAR, **params):
         # crop = F.random_crop(img, crop_height, crop_width, h_start, w_start)
         # crop using pyvips
-        crop = crop.crop(w_start, h_start, crop_width, crop_height)
+        crop = img.crop(w_start, h_start, crop_width, crop_height)
         return crop
 
     def apply_to_bbox(self, bbox, crop_height=0, crop_width=0, h_start=0, w_start=0, rows=0, cols=0, **params):
