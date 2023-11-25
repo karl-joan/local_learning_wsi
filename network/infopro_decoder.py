@@ -59,7 +59,7 @@ class RandomInfoProDecoder(InfoProDecoder):
         min_dim_ori = min(image_ori_large.shape[-2] // self.up_scale, image_ori_large.shape[-1] // self.up_scale)
 
         # If patch_size is larger than any dimension, reduce it temporarily
-        patch_size_new = min(min_dim_large, min_dim_ori, self.patch_size)
+        patch_size_new = min(min_dim_large, min_dim_ori, self.patch_size) - 1 # si the sampling space is not zero
         path_size_old = self.patch_size
         self.patch_size = patch_size_new
 
@@ -83,6 +83,7 @@ class RandomInfoProDecoder(InfoProDecoder):
             print(f"Large space: {sampling_space_large}")
             print(f"Ori space: {sampling_space_ori}")
             print(f"Sampling space: {sampling_space}")
+
 
         sampling_pos = torch.randint(0, sampling_space[0] * sampling_space[1],
                                      [features_large.shape[0], self.num_patches], device=features.device)
