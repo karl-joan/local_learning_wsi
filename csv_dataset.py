@@ -24,7 +24,7 @@ def read_rgb_img(img_path):
 
 class CsvDataset(Dataset):
 
-    def __init__(self, dataset_path, dataset_csv, data_type, transforms=transforms.ToTensor()):
+    def __init__(self, dataset_path, dataset_csv, data_type, transforms=transforms.ToTensor(), transform_crop=None):
         # self.root_path = dataset_path
         self.dataset_csv_path = dataset_csv
         if data_type not in ['train', 'valid', 'test']:
@@ -37,20 +37,25 @@ class CsvDataset(Dataset):
         self.image_id = self.label_df['slide_id'].values
 
         self.transforms = transforms
+        self.transform_crop = transform_crop
 
     def __len__(self):
         return len(self.label)
 
     def __getitem__(self, i):
         img_id, label = self.image_id[i], self.label[i]
-        # file_name = img_id
-        # full_path = os.path.join(self.root_path, file_name)
         full_path = img_id
 
-        # if self.data_extension == "jpg":
-        #     img = read_rgb_jpg(full_path)
-        # else:
         img = read_rgb_img(full_path)
+
+        if self.transform_crop is not None:
+            # Get the parameters for the crop
+            params = self.transform_crop.get_params_dependent_on_targets({'image': img})
+
+            # Apply the crop to the image
+            img = self.transform_crop.apply(img, **params)
+        else:
+            img = np.asarray(img)
 
         if self.transforms is not None:
             img = self.transforms(img)
@@ -89,6 +94,7 @@ class CsvDataModule(pl.LightningDataModule):
         elif isinstance(cus_transforms, (list, tuple)):
             self.transforms_train = cus_transforms[0]
             self.transforms_eval = cus_transforms[1]
+            self.transforms_crop = cus_transforms[2]
         else:
             self.transforms_train, self.transforms_eval = cus_transforms, cus_transforms
 
@@ -102,7 +108,7 @@ class CsvDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         if self.dataset_train is None:
             self.dataset_train = CsvDataset(self.dataset_path, self.dataset_csv, "train",
-                                            transforms=self.transforms_train)
+                                            transforms=self.transforms_train, transform_crop=self.transforms_crop)
             self.dataset_val = CsvDataset(self.dataset_path, self.dataset_csv, "valid",
                                           transforms=self.transforms_eval)
             self.dataset_test = CsvDataset(self.dataset_path, self.dataset_csv, "test",
