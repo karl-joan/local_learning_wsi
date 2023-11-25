@@ -21,18 +21,15 @@ from csv_dataset import CsvDataModule
 from trainer import LocalModule
 from utils import save_parameters, RandomCropEdge
 
-import numpy as np
-
 
 def get_A_transforms():
     # we normlize wsis according to the mean and std of each dataset, filtering backgrounds.
     # The fallback values here are the mean and std of the entire TCGA dataset.
     mean = args.data_mean if args.data_mean else [0.7223, 0.5304, 0.6579]
     std = args.data_std if args.data_std else [0.2057, 0.2471, 0.2010]
-
-    # For smaller WSI, we set a conservative scale, otherwise, it may result in too small images
-    transform_crop = RandomCropEdge(scale=(0.5, 1.0), scale_for_small=(0.9, 1.0), small_length=3000, p=0.6)
     transform_train_fn = A.Compose([
+        # For smaller WSI, we set a conservative scale, otherwise, it may result in too small images
+        RandomCropEdge(scale=(0.5, 1.0), scale_for_small=(0.9, 1.0), small_length=3000, p=0.6),
         A.Flip(p=0.75),
         A.RandomRotate90(),
         A.ColorJitter(0.1, 0.1, 0.1, 0.1),
@@ -45,7 +42,7 @@ def get_A_transforms():
     ])
     transform_train = lambda x: transform_train_fn(image=x)["image"]
     transform_test = lambda x: transform_test_fn(image=x)["image"]
-    return transform_train, transform_test, transform_crop
+    return transform_train, transform_test
 
 
 def get_metric(num_classes):

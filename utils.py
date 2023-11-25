@@ -45,9 +45,7 @@ class _BaseRandomCrop(DualTransform):
         self.interpolation = interpolation
 
     def apply(self, img, crop_height=0, crop_width=0, h_start=0, w_start=0, interpolation=cv2.INTER_LINEAR, **params):
-        # crop = F.random_crop(img, crop_height, crop_width, h_start, w_start)
-        # crop using pyvips
-        crop = img.crop(w_start, h_start, crop_width, crop_height)
+        crop = F.random_crop(img, crop_height, crop_width, h_start, w_start)
         return crop
 
     def apply_to_bbox(self, bbox, crop_height=0, crop_width=0, h_start=0, w_start=0, rows=0, cols=0, **params):
@@ -183,29 +181,22 @@ class RandomCropEdge(_BaseRandomCrop):
     def get_params_dependent_on_targets(self, params):
         img = params["image"]
 
-        # hw = [0, 0]
-        # for i in range(2):
-        #     #####: Major modification here
-        #     scale = self.scale if img.shape[i] >= self.small_length else self.scale_for_small
-        #     hw[i] = random.uniform(*scale) * img.shape[i]
-        #     hw[i] = int(round(hw[i]))
-        # h, w = hw
-
         hw = [0, 0]
-        for i, dim in enumerate([img.height, img.width]):
-            scale = self.scale if dim >= self.small_length else self.scale_for_small
-            hw[i] = random.uniform(*scale) * dim
+        for i in range(2):
+            #####: Major modification here
+            scale = self.scale if img.shape[i] >= self.small_length else self.scale_for_small
+            hw[i] = random.uniform(*scale) * img.shape[i]
             hw[i] = int(round(hw[i]))
         h, w = hw
 
-        if 0 < w <= img.width and 0 < h <= img.height:
-            i = random.randint(0, img.height - h)
-            j = random.randint(0, img.width - w)
+        if 0 < w <= img.shape[1] and 0 < h <= img.shape[0]:
+            i = random.randint(0, img.shape[0] - h)
+            j = random.randint(0, img.shape[1] - w)
             return {
                 "crop_height": h,
                 "crop_width": w,
-                "h_start": i * 1.0 / (img.height - h + 1e-10),
-                "w_start": j * 1.0 / (img.width - w + 1e-10),
+                "h_start": i * 1.0 / (img.shape[0] - h + 1e-10),
+                "w_start": j * 1.0 / (img.shape[1] - w + 1e-10),
             }
 
         # else, do not crop
