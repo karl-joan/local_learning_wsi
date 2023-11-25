@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 import torch
 from pytorch_lightning.loggers import WandbLogger
 from torch import nn
-from torchmetrics import MetricCollection, Accuracy, AUROC
+from torchmetrics import MetricCollection, Accuracy, AUROC,  F1
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 
 import albumentations as A
