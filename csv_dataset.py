@@ -24,7 +24,7 @@ def read_rgb_img(img_path):
 class CsvDataset(Dataset):
 
     def __init__(self, dataset_path, dataset_csv, data_type, transforms=transforms.ToTensor()):
-        self.root_path = dataset_path
+        # self.root_path = dataset_path
         self.dataset_csv_path = dataset_csv
         if data_type not in ['train', 'valid', 'test']:
             raise Exception("Not supported dataset type. It should be train, valid or test")
@@ -42,8 +42,9 @@ class CsvDataset(Dataset):
 
     def __getitem__(self, i):
         img_id, label = self.image_id[i], self.label[i]
-        file_name = img_id
-        full_path = os.path.join(self.root_path, file_name)
+        # file_name = img_id
+        # full_path = os.path.join(self.root_path, file_name)
+        full_path = img_id
 
         # if self.data_extension == "jpg":
         #     img = read_rgb_jpg(full_path)
