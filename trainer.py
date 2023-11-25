@@ -165,6 +165,7 @@ class LocalModule(pl.LightningModule):
         for outs, metrics_fn in zip(self.validation_step_outputs, [self.eval_metrics, self.eval_test_metrics]):
             y_prob = torch.cat([o["y_prob_batch"] for o in outs if o is not None], dim=0)
             label = torch.cat([o["label_batch"] for o in outs if o is not None], dim=0)
+            print([o["label_batch"] for o in outs if o is not None])
             metrics = metrics_fn(y_prob, label)
             if not self.trainer.sanity_checking:
                 self.logger.log_metrics(metrics, step=self.current_epoch)
