@@ -114,7 +114,7 @@ class LocalModule(pl.LightningModule):
         output = {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
         self.train_step_outputs.append(output)
 
-        return loss
+        return loss.detach()
 
     def validation_step(self, batch, batch_idx, dataloader_idx):
         img, label = batch
@@ -141,7 +141,7 @@ class LocalModule(pl.LightningModule):
         output = {"loss": loss.detach(), "y_prob_batch": y_prob.detach(), "label_batch": label.detach()}
         self.validation_step_outputs.append(output)
 
-        return loss
+        return loss.detach()
 
     def test_step(self, batch, batch_idx):
         img, label = batch
