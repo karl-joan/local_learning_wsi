@@ -89,8 +89,8 @@ class LocalModule(pl.LightningModule):
                     self.log("loss/train_%d" % cur_k, loss_k, on_step=True, on_epoch=True, sync_dist=True)
                     self.log("acc/train_%d" % cur_k, self.acc_metrics(y_prob_k, label), on_step=False, on_epoch=True)
 
-                    # gc.collect()
-                    # torch.cuda.empty_cache()
+                    gc.collect()
+                    torch.cuda.empty_cache()
 
                 opt = self.optimizers()
                 if (batch_idx + 1) % self.accumulate_grad_batches == 0:
