@@ -103,8 +103,8 @@ class LocalModule(pl.LightningModule):
             except RuntimeError as e:
                 retry_time += 1
                 print('Runtime Error {}\nRun Again......{}/{}'.format(e, retry_time, 2))
-                # gc.collect()
-                # torch.cuda.empty_cache()
+                gc.collect()
+                torch.cuda.empty_cache()
                 if retry_time >= 2:
                     print('Give up!')
                     return {"loss": torch.zeros(1, device=label.device).mean(),
